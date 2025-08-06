@@ -1,5 +1,6 @@
 const Booking = require('../models/Booking');
 const { validationResult } = require('express-validator');
+const { sendBookingEmails } = require('../services/emailService');
 
 // Create a new booking
 const createBooking = async (req, res) => {
@@ -33,6 +34,9 @@ const createBooking = async (req, res) => {
       paymentDetails
     } = req.body;
 
+    // Set booking status based on PayPal payment status
+    const bookingStatus = paymentDetails?.status === 'COMPLETED' ? 'confirmed' : 'pending';
+
     const booking = await Booking.create({
       name,
       date,
@@ -57,14 +61,42 @@ const createBooking = async (req, res) => {
       paymentCurrency: paymentDetails?.currency || null,
       paymentStatus: paymentDetails?.status || null,
       paymentTimestamp: paymentDetails?.timestamp || null,
-      // Set status to confirmed if payment is successful
-      status: paymentDetails?.status === 'COMPLETED' ? 'confirmed' : 'pending'
+      // Set status based on payment completion
+      status: bookingStatus
     });
+
+    // Send confirmation emails if payment is completed
+    let emailResult = null;
+    if (paymentDetails?.status === 'COMPLETED') {
+      try {
+        const bookingData = {
+          name,
+          date,
+          time,
+          email,
+          contact,
+          message,
+          mentorName,
+          address,
+          postalCode,
+          city
+        };
+
+        emailResult = await sendBookingEmails(bookingData, paymentDetails);
+        console.log('Email sending result:', emailResult);
+      } catch (emailError) {
+        console.error('Error sending confirmation emails:', emailError);
+        // Don't fail the booking creation if email fails
+        emailResult = { success: false, error: emailError.message };
+      }
+    }
 
     res.status(201).json({
       status: 'success',
       message: 'Booking created successfully',
-      data: booking
+      data: booking,
+      emailSent: emailResult?.success || false,
+      emailDetails: emailResult
     });
   } catch (error) {
     console.error('Error creating booking:', error);

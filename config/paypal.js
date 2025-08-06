@@ -8,11 +8,18 @@ const paypalConfig = {
   // Environment (sandbox or live)
   mode: process.env.PAYPAL_MODE || 'sandbox', // 'sandbox' for testing, 'live' for production
   
-  // Currency settings
-  currency: process.env.PAYPAL_CURRENCY || 'USD',
+  // Currency settings - supports EUR and CHF only
+  defaultCurrency: process.env.PAYPAL_CURRENCY || 'EUR',
+  supportedCurrencies: ['EUR', 'CHF'],
   
-  // Default session pricing
-  sessionPrice: process.env.SESSION_PRICE || 99,
+  // Currency conversion rates (EUR as base)
+  currencyRates: {
+    EUR: 1,    // Base currency
+    CHF: 0.96  // 1 EUR = 0.96 CHF (approximate)
+  },
+  
+  // Default session pricing (in EUR)
+  sessionPriceEUR: process.env.SESSION_PRICE || 1,
   
   // PayPal webhook settings
   webhookId: process.env.PAYPAL_WEBHOOK_ID || null,
