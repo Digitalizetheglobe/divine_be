@@ -78,8 +78,8 @@ const emailTemplates = {
           </ul>
           
           <h3>📍 Contact Information</h3>
-          <p><strong>Email:</strong> support@divinementors.com</p>
-          <p><strong>WhatsApp:</strong> +1 (555) 123-4567</p>
+          <p><strong>Email:</strong> info@divinementors.com</p>
+          <p><strong>WhatsApp:</strong> +41797951817</p>
           
           <div class="footer">
             <p>Thank you for trusting Divine Mentors with your spiritual journey.</p>
