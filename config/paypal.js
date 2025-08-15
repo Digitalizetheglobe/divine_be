@@ -9,7 +9,7 @@ const paypalConfig = {
   mode: process.env.PAYPAL_MODE || 'sandbox', // 'sandbox' for testing, 'live' for production
   
   // Currency settings - supports EUR and CHF only
-  defaultCurrency: process.env.PAYPAL_CURRENCY || 'EUR',
+  defaultCurrency: process.env.PAYPAL_CURRENCY || 'CHF',
   supportedCurrencies: ['EUR', 'CHF'],
   
   // Currency conversion rates (EUR as base)
