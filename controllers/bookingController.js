@@ -1,6 +1,6 @@
 const Booking = require('../models/Booking');
 const { validationResult } = require('express-validator');
-const { sendBookingEmails } = require('../services/emailService');
+const { sendBookingEmails, sendOfflineBookingEmails } = require('../services/emailService');
 
 // Create a new booking
 const createBooking = async (req, res) => {
@@ -181,18 +181,13 @@ const createOfflineBooking = async (req, res) => {
         address,
         postalCode,
         city,
-        sessionDuration
+        sessionDuration,
+        paymentAmount,
+        paymentCurrency,
+        paymentMethod
       };
 
-      const offlinePaymentDetails = {
-        status: 'COMPLETED',
-        amount: paymentAmount,
-        currency: paymentCurrency,
-        method: paymentMethod,
-        timestamp: new Date()
-      };
-
-      emailResult = await sendBookingEmails(bookingData, offlinePaymentDetails);
+      emailResult = await sendOfflineBookingEmails(bookingData);
       console.log('Offline booking email sending result:', emailResult);
     } catch (emailError) {
       console.error('Error sending confirmation emails for offline booking:', emailError);
@@ -366,7 +361,20 @@ const updateBooking = async (req, res) => {
           timestamp: updatedBooking.paymentTimestamp
         };
 
-        emailResult = await sendBookingEmails(bookingData, paymentDetails);
+        // Use appropriate email service based on payment method
+        if (['cash', 'local_bank_transfer', 'local_payment'].includes(updateData.paymentMethod || booking.paymentMethod)) {
+          // Offline booking - use offline email service
+          const offlineBookingData = {
+            ...bookingData,
+            paymentAmount: updatedBooking.paymentAmount,
+            paymentCurrency: updatedBooking.paymentCurrency,
+            paymentMethod: updateData.paymentMethod || booking.paymentMethod
+          };
+          emailResult = await sendOfflineBookingEmails(offlineBookingData);
+        } else {
+          // Online booking - use regular email service
+          emailResult = await sendBookingEmails(bookingData, paymentDetails);
+        }
         console.log('Update confirmation email result:', emailResult);
       } catch (emailError) {
         console.error('Error sending update confirmation email:', emailError);
