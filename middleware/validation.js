@@ -58,30 +58,11 @@ const createBookingValidation = [
     .isLength({ max: 50 })
     .withMessage('City must not exceed 50 characters'),
   
-  body('demo1')
-    .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo1 must not exceed 255 characters'),
-  
-  body('demo2')
-    .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo2 must not exceed 255 characters'),
-  
-  body('demo3')
-    .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo3 must not exceed 255 characters'),
-  
-  body('demo4')
-    .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo4 must not exceed 255 characters'),
-  
-  body('demo5')
-    .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo5 must not exceed 255 characters')
+  body('sessionDuration')
+    .notEmpty()
+    .withMessage('Session duration is required for offline booking')
+    .isIn(['25 min', '50 min'])
+    .withMessage('Session duration must be either 25 min or 50 min')
 ];
 
 // Validation rules for updating a booking
@@ -148,30 +129,25 @@ const updateBookingValidation = [
     .isLength({ min: 2, max: 50 })
     .withMessage('City must be between 2 and 50 characters'),
   
-  body('demo1')
+  body('sessionDuration')
     .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo1 must not exceed 255 characters'),
+    .isIn(['25 min', '50 min'])
+    .withMessage('Session duration must be either 25 min or 50 min'),
   
-  body('demo2')
+  body('paymentAmount')
     .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo2 must not exceed 255 characters'),
+    .isFloat({ min: 0.01 })
+    .withMessage('Payment amount must be a positive number'),
   
-  body('demo3')
+  body('paymentCurrency')
     .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo3 must not exceed 255 characters'),
+    .isIn(['EUR', 'CHF'])
+    .withMessage('Payment currency must be either EUR or CHF'),
   
-  body('demo4')
+  body('paymentMethod')
     .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo4 must not exceed 255 characters'),
-  
-  body('demo5')
-    .optional()
-    .isLength({ max: 255 })
-    .withMessage('Demo5 must not exceed 255 characters')
+    .isIn(['cash', 'local_bank_transfer', 'local_payment', 'paypal'])
+    .withMessage('Payment method must be either cash, local_bank_transfer, local_payment, or paypal')
 ];
 
 // Validation rules for updating booking status
@@ -218,8 +194,99 @@ const idValidation = [
     .withMessage('Booking ID must be a valid integer')
 ];
 
+// Validation rules for offline/cash bookings
+const createOfflineBookingValidation = [
+  body('name')
+    .notEmpty()
+    .withMessage('Name is required for offline booking')
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Name must be between 2 and 100 characters'),
+  
+  body('date')
+    .notEmpty()
+    .withMessage('Date is required for offline booking')
+    .isDate()
+    .withMessage('Date must be a valid date'),
+  
+  body('time')
+    .notEmpty()
+    .withMessage('Time is required for offline booking')
+    .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage('Time must be in HH:MM format'),
+  
+  body('email')
+    .optional()
+    .isEmail()
+    .withMessage('Email must be a valid email address')
+    .normalizeEmail(),
+  
+  body('contact')
+    .notEmpty()
+    .withMessage('Contact is required for offline booking')
+    .isLength({ min: 10, max: 20 })
+    .withMessage('Contact must be between 10 and 20 characters')
+    .matches(/^[0-9+\-\s()]+$/)
+    .withMessage('Contact must contain only numbers, spaces, hyphens, and parentheses'),
+  
+  body('message')
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage('Message must not exceed 1000 characters'),
+  
+  body('mentorName')
+    .notEmpty()
+    .withMessage('Mentor name is required for offline booking')
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Mentor name must be between 2 and 100 characters'),
+  
+  body('address')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Address must not exceed 500 characters'),
+  
+  body('postalCode')
+    .optional()
+    .trim()
+    .isLength({ max: 10 })
+    .withMessage('Postal code must not exceed 10 characters'),
+  
+  body('city')
+    .optional()
+    .trim()
+    .isLength({ max: 50 })
+    .withMessage('City must not exceed 50 characters'),
+  
+  body('sessionDuration')
+    .notEmpty()
+    .withMessage('Session duration is required for offline booking')
+    .isIn(['25 min', '50 min'])
+    .withMessage('Session duration must be either 25 min or 50 min'),
+  
+  body('paymentAmount')
+    .notEmpty()
+    .withMessage('Payment amount is required for offline booking')
+    .isFloat({ min: 0.01 })
+    .withMessage('Payment amount must be a positive number'),
+  
+  body('paymentCurrency')
+    .notEmpty()
+    .withMessage('Payment currency is required for offline booking')
+    .isIn(['EUR', 'CHF'])
+    .withMessage('Payment currency must be either EUR or CHF'),
+  
+  body('paymentMethod')
+    .notEmpty()
+    .withMessage('Payment method is required for offline booking')
+    .isIn(['cash', 'local_bank_transfer', 'local_payment'])
+    .withMessage('Payment method must be cash, local_bank_transfer, or local_payment')
+];
+
 module.exports = {
   createBookingValidation,
+  createOfflineBookingValidation,
   updateBookingValidation,
   updateStatusValidation,
   queryValidation,
