@@ -61,8 +61,8 @@ const createBookingValidation = [
   body('sessionDuration')
     .notEmpty()
     .withMessage('Session duration is required for offline booking')
-    .isIn(['25 min', '50 min'])
-    .withMessage('Session duration must be either 25 min or 50 min')
+    .isIn(['15 min free session', '25 min', '50 min'])
+    .withMessage('Session duration must be either 15 min free session, 25 min, or 50 min')
 ];
 
 // Validation rules for updating a booking
@@ -131,8 +131,8 @@ const updateBookingValidation = [
   
   body('sessionDuration')
     .optional()
-    .isIn(['25 min', '50 min'])
-    .withMessage('Session duration must be either 25 min or 50 min'),
+    .isIn(['15 min free session', '25 min', '50 min'])
+    .withMessage('Session duration must be either 15 min free session, 25 min, or 50 min'),
   
   body('paymentAmount')
     .optional()
@@ -262,8 +262,8 @@ const createOfflineBookingValidation = [
   body('sessionDuration')
     .notEmpty()
     .withMessage('Session duration is required for offline booking')
-    .isIn(['25 min', '50 min'])
-    .withMessage('Session duration must be either 25 min or 50 min'),
+    .isIn(['15 min free session', '25 min', '50 min'])
+    .withMessage('Session duration must be either 15 min free session, 25 min, or 50 min'),
   
   body('paymentAmount')
     .notEmpty()
