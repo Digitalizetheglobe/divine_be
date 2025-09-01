@@ -79,7 +79,8 @@ const createBooking = async (req, res) => {
           mentorName,
           address,
           postalCode,
-          city
+          city,
+          demo1
         };
 
         emailResult = await sendBookingEmails(bookingData, paymentDetails);

@@ -60,15 +60,22 @@ const emailTemplates = {
             <p><strong>Preferred Date:</strong> <span class="highlight">${bookingData.date}</span></p>
             <p><strong>Preferred Time:</strong> <span class="highlight">${bookingData.time}</span></p>
             <p><strong>Session Type:</strong> <span class="highlight">Spiritual Guidance Session</span></p>
-            <p><strong>Session Duration:</strong> <span class="highlight">${bookingData.demo1 || '50 min'}</span></p>
+            <p><strong>Session Duration:</strong> <span class="highlight">${bookingData.demo1 || 'Session Duration Not Specified'}</span></p>
           </div>
           
           <div class="payment-details">
             <h3>💳 Payment Confirmation</h3>
-            <p><strong>Payment ID:</strong> ${paymentDetails.paymentID}</p>
-            <p><strong>Amount Paid:</strong> €${paymentDetails.amount}</p>
-            <p><strong>Payment Status:</strong> <span style="color: #28a745; font-weight: bold;">✓ Confirmed</span></p>
-            <p><strong>Transaction Date:</strong> ${new Date(paymentDetails.timestamp).toLocaleString()}</p>
+            ${bookingData.demo1 === '15 min free session' ? 
+              `<p><strong>Payment ID:</strong> FREE SESSION</p>
+               <p><strong>Amount Paid:</strong> <span style="color: #28a745; font-weight: bold;">FREE</span></p>
+               <p><strong>Payment Status:</strong> <span style="color: #28a745; font-weight: bold;">✓ Confirmed</span></p>
+               <p><strong>Transaction Date:</strong> ${new Date(paymentDetails.timestamp).toLocaleString()}</p>
+               <p><strong>Note:</strong> This is a complimentary 15-minute session</p>` :
+              `<p><strong>Payment ID:</strong> ${paymentDetails.paymentID}</p>
+               <p><strong>Amount Paid:</strong> €${paymentDetails.amount}</p>
+               <p><strong>Payment Status:</strong> <span style="color: #28a745; font-weight: bold;">✓ Confirmed</span></p>
+               <p><strong>Transaction Date:</strong> ${new Date(paymentDetails.timestamp).toLocaleString()}</p>`
+            }
           </div>
           
           <h3>📞 What's Next?</h3>
@@ -133,7 +140,7 @@ const emailTemplates = {
             <p><strong>Preferred Date:</strong> <span class="highlight">${bookingData.date}</span></p>
             <p><strong>Preferred Time:</strong> <span class="highlight">${bookingData.time}</span></p>
             <p><strong>Session Type:</strong> <span class="highlight">Spiritual Guidance Session</span></p>
-            <p><strong>Session Duration:</strong> <span class="highlight">${bookingData.sessionDuration || '50 min'}</span></p>
+            <p><strong>Session Duration:</strong> <span class="highlight">${bookingData.sessionDuration || 'Session Duration Not Specified'}</span></p>
           </div>
           
           <div class="payment-details">
@@ -206,6 +213,7 @@ const emailTemplates = {
             <p><strong>Preferred Date:</strong> <span class="highlight">${bookingData.date}</span></p>
             <p><strong>Preferred Time:</strong> <span class="highlight">${bookingData.time}</span></p>
             <p><strong>Session Type:</strong> <span class="highlight">Spiritual Guidance Session</span></p>
+            <p><strong>Session Duration:</strong> <span class="highlight">${bookingData.demo1 || 'Session Duration Not Specified'}</span></p>
           </div>
           
           <div class="customer-info">
@@ -221,11 +229,19 @@ const emailTemplates = {
           
           <div class="payment-details">
             <h3>💳 Payment Information</h3>
-            <p><strong>Payment ID:</strong> ${paymentDetails.paymentID}</p>
-            <p><strong>Order ID:</strong> ${paymentDetails.orderID}</p>
-            <p><strong>Amount Received:</strong> €${paymentDetails.amount}</p>
-            <p><strong>Payment Status:</strong> <span style="color: #28a745; font-weight: bold;">✓ Completed</span></p>
-            <p><strong>Transaction Date:</strong> ${new Date(paymentDetails.timestamp).toLocaleString()}</p>
+            ${bookingData.demo1 === '15 min free session' ? 
+              `<p><strong>Payment ID:</strong> FREE SESSION</p>
+               <p><strong>Order ID:</strong> FREE SESSION</p>
+               <p><strong>Amount Received:</strong> <span style="color: #28a745; font-weight: bold;">FREE</span></p>
+               <p><strong>Payment Status:</strong> <span style="color: #28a745; font-weight: bold;">✓ Completed</span></p>
+               <p><strong>Transaction Date:</strong> ${new Date(paymentDetails.timestamp).toLocaleString()}</p>
+               <p><strong>Note:</strong> This is a complimentary 15-minute session</p>` :
+              `<p><strong>Payment ID:</strong> ${paymentDetails.paymentID}</p>
+               <p><strong>Order ID:</strong> ${paymentDetails.orderID}</p>
+               <p><strong>Amount Received:</strong> €${paymentDetails.amount}</p>
+               <p><strong>Payment Status:</strong> <span style="color: #28a745; font-weight: bold;">✓ Completed</span></p>
+               <p><strong>Transaction Date:</strong> ${new Date(paymentDetails.timestamp).toLocaleString()}</p>`
+            }
           </div>
           
           <h3>📋 Action Required</h3>
@@ -286,7 +302,7 @@ const emailTemplates = {
             <p><strong>Preferred Date:</strong> <span class="highlight">${bookingData.date}</span></p>
             <p><strong>Preferred Time:</strong> <span class="highlight">${bookingData.time}</span></p>
             <p><strong>Session Type:</strong> <span class="highlight">Spiritual Guidance Session</span></p>
-            <p><strong>Session Duration:</strong> <span class="highlight">${bookingData.sessionDuration || '50 min'}</span></p>
+            <p><strong>Session Duration:</strong> <span class="highlight">${bookingData.sessionDuration || 'Session Duration Not Specified'}</span></p>
           </div>
           
           <div class="customer-info">
@@ -350,7 +366,7 @@ const sendUserConfirmation = async (bookingData, paymentDetails) => {
     const mailOptions = {
       from: '"Divine Mentors" <cfconline1310@gmail.com>',
       to: bookingData.email,
-      subject: '🎉 Booking Confirmed - Divine Mentors',
+      subject: `🎉 ${bookingData.demo1 === '15 min free session' ? 'Free ' : ''}Booking Confirmed - Divine Mentors`,
       html: emailTemplates.userConfirmation(bookingData, paymentDetails)
     };
 
@@ -369,7 +385,7 @@ const sendAdminNotification = async (bookingData, paymentDetails) => {
     const mailOptions = {
       from: '"Divine Mentors Booking System" <cfconline1310@gmail.com>',
       to: 'cfconline1310@gmail.com',
-      subject: `📋 New Booking - ${bookingData.name} with ${bookingData.mentorName}`,
+      subject: `📋 New ${bookingData.demo1 === '15 min free session' ? 'Free ' : ''}Booking - ${bookingData.name} with ${bookingData.mentorName}`,
       html: emailTemplates.adminNotification(bookingData, paymentDetails)
     };
 
