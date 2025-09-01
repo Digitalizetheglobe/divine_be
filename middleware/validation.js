@@ -58,11 +58,10 @@ const createBookingValidation = [
     .isLength({ max: 50 })
     .withMessage('City must not exceed 50 characters'),
   
-  body('sessionDuration')
-    .notEmpty()
-    .withMessage('Session duration is required for offline booking')
+  body('demo1')
+    .optional()
     .isIn(['15 min free session', '25 min', '50 min'])
-    .withMessage('Session duration must be either 15 min free session, 25 min, or 50 min')
+    .withMessage('Session duration (demo1) must be either 15 min free session, 25 min, or 50 min')
 ];
 
 // Validation rules for updating a booking
